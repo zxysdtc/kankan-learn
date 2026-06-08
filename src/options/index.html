@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>看看学 · 设置</title>
+    <link rel="stylesheet" href="./options.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>⭐ 看看学 · 家长设置</h1>
+
+      <section>
+        <h2>AI 出题接口</h2>
+        <label class="field">
+          <span class="label">服务预设</span>
+          <select id="preset">
+            <option value="deepseek">DeepSeek（推荐）</option>
+            <option value="openai">OpenAI</option>
+            <option value="custom">自定义（其它 OpenAI 格式接口）</option>
+          </select>
+          <small>选预设会自动填好下面的地址和模型，也可以自己改。</small>
+        </label>
+
+        <label class="field">
+          <span class="label">接口地址 (Base URL)</span>
+          <input id="baseUrl" type="text" placeholder="https://api.deepseek.com" />
+          <small>填服务的 Base 地址即可（会自动补 /chat/completions）；也可直接填完整 endpoint。</small>
+        </label>
+
+        <label class="field">
+          <span class="label">模型名称</span>
+          <input id="model" type="text" placeholder="deepseek-chat" />
+        </label>
+
+        <label class="field">
+          <span class="label">API 密钥</span>
+          <input id="apiKey" type="password" placeholder="sk-..." />
+          <small>只保存在本机。不填则使用内置简单题（仍然紧扣视频内容）。</small>
+        </label>
+      </section>
+
+      <section>
+        <h2>练习设置</h2>
+        <label class="field">
+          <span class="label">每个视频出几道题</span>
+          <input id="count" type="number" min="2" max="8" />
+          <small>建议 3~5 道，避免孩子疲劳。</small>
+        </label>
+
+        <div class="field">
+          <span class="label">难度</span>
+          <div id="difficulty" class="seg">
+            <button type="button" data-v="1">🌱 简单<small>听词选词为主</small></button>
+            <button type="button" data-v="2">🌿 中等<small>听词 + 拼音</small></button>
+            <button type="button" data-v="3">🌳 挑战<small>拼音/声母辨析</small></button>
+          </div>
+          <small>难度越高，越偏向拼音辨析，干扰项会用平翘舌、前后鼻音等近音。</small>
+        </div>
+
+        <label class="field">
+          <span class="label">朗读音量：<b id="volVal"></b></span>
+          <input id="volume" type="range" min="0" max="1" step="0.1" />
+        </label>
+
+        <label class="field">
+          <span class="label">朗读语速：<b id="rateVal"></b></span>
+          <input id="rate" type="range" min="0.5" max="1.2" step="0.1" />
+          <small>孩子识字弱时，建议慢一点（0.7~0.8）。</small>
+        </label>
+      </section>
+
+      <div class="actions">
+        <button id="save" class="primary">保存设置</button>
+        <button id="test" class="ghost">🔊 试听</button>
+        <span id="status" class="status"></span>
+      </div>
+
+      <p class="note">
+        提示：使用前请在浏览器里登录 B站（否则拿不到字幕）。打开任意带字幕的视频，扩展侧边栏会自动准备好练习。
+      </p>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

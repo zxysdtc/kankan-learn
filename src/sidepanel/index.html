@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>看看学</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <span class="logo">⭐ 看看学</span>
+        <span class="topbar-actions">
+          <button id="rescan-btn" class="settings-btn" title="重新检测视频">🔄</button>
+          <button id="settings-btn" class="settings-btn" title="设置">⚙️</button>
+        </span>
+      </header>
+      <main id="screen"><!-- 由 main.ts 渲染 --></main>
+    </div>
+    <!-- 奖励用的星星层 -->
+    <div id="reward-layer" aria-hidden="true"></div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

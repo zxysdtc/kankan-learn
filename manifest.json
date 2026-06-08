@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "看看学 - 看完视频学拼音生字",
+  "version": "0.1.0",
+  "description": "在B站看完视频后，根据视频字幕做几道拼音和生字小游戏，边玩边学。",
+  "icons": {
+    "16": "src/assets/icons/icon16.png",
+    "48": "src/assets/icons/icon48.png",
+    "128": "src/assets/icons/icon128.png"
+  },
+  "permissions": ["sidePanel", "storage", "tts", "tabs", "scripting"],
+  "host_permissions": [
+    "https://api.bilibili.com/*",
+    "https://aisubtitle.hdslb.com/*",
+    "https://*.hdslb.com/*",
+    "https://*.bilibili.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background/index.ts",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.bilibili.com/video/*", "https://*.bilibili.com/bangumi/*"],
+      "js": ["src/content/index.ts"],
+      "run_at": "document_idle"
+    }
+  ],
+  "side_panel": {
+    "default_path": "src/sidepanel/index.html"
+  },
+  "options_page": "src/options/index.html",
+  "action": {
+    "default_title": "看看学",
+    "default_icon": {
+      "16": "src/assets/icons/icon16.png",
+      "48": "src/assets/icons/icon48.png",
+      "128": "src/assets/icons/icon128.png"
+    }
+  }
+}
