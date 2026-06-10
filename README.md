@@ -45,6 +45,16 @@
 
 ## 安装（家长操作一次即可）
 
+### 方式一：下载安装包（推荐，免编译）
+
+1. 到 [**Releases**](https://github.com/zxysdtc/kankan-learn/releases/latest) 下载最新版
+   [`kankan-learn-v0.3.0.zip`](https://github.com/zxysdtc/kankan-learn/releases/download/v0.3.0/kankan-learn-v0.3.0.zip)，解压到一个固定文件夹。
+2. 地址栏输入 `chrome://extensions`，打开右上角「**开发者模式**」。
+3. 点「**加载已解压的扩展程序**」，选择刚解压出来的文件夹。
+4. 点扩展图标 ⭐，或在任意 B站视频页右侧打开侧边栏。
+
+### 方式二：从源码构建
+
 ```bash
 cd kankan-learn
 npm install
@@ -109,4 +119,9 @@ npm run build   # 产出 dist/
 ## 已知边界 / 后续可扩展
 
 - 目前未实现 B站 WBI 签名（当前字幕接口不强制，若日后失效再补）。
+- 数学目前仅支持加减法，乘除、看图/应用题等可后续扩展。
 - 可扩展：内置小学生字表强化选字、做题记录导出/成长报告图表、云端童声 TTS、预录拼音音频。
+
+## 更新日志
+
+版本变更记录见 [CHANGELOG.md](./CHANGELOG.md)。
