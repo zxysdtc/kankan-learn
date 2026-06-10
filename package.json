@@ -1,7 +1,7 @@
 {
   "name": "kankan-learn",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "看看学 - 一个帮助小朋友在看完B站视频后做拼音/生字练习的Chrome扩展",
   "type": "module",
   "scripts": {

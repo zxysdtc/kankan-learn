@@ -9,6 +9,10 @@ const model = $<HTMLInputElement>('model')
 const apiKey = $<HTMLInputElement>('apiKey')
 const count = $<HTMLInputElement>('count')
 const difficultyBox = $<HTMLElement>('difficulty')
+const autoplayBox = $<HTMLElement>('autoplay')
+const autoremoveBox = $<HTMLElement>('autoremove')
+const streak = $<HTMLInputElement>('streak')
+const streakField = $<HTMLElement>('streak-field')
 const volume = $<HTMLInputElement>('volume')
 const rate = $<HTMLInputElement>('rate')
 const volVal = $<HTMLElement>('volVal')
@@ -21,6 +25,8 @@ const PRESETS: Record<string, { baseUrl: string; model: string }> = {
 }
 
 let difficulty: Difficulty = 1
+let autoPlay = true
+let autoRemove = true
 
 async function load() {
   const cfg = await getConfig()
@@ -31,8 +37,13 @@ async function load() {
   volume.value = String(cfg.volume)
   rate.value = String(cfg.rate)
   difficulty = cfg.difficulty
+  autoPlay = cfg.autoPlayAudio
+  autoRemove = cfg.wrongbookAutoRemove
+  streak.value = String(cfg.wrongbookMasterStreak)
   preset.value = detectPreset(cfg.apiBaseUrl, cfg.apiModel)
   syncDifficulty()
+  syncAutoplay()
+  syncAutoremove()
   syncLabels()
 }
 
@@ -52,6 +63,34 @@ function syncDifficulty() {
     b.classList.toggle('on', Number((b as HTMLButtonElement).dataset.v) === difficulty)
   })
 }
+
+function syncAutoplay() {
+  autoplayBox.querySelectorAll('button').forEach((b) => {
+    b.classList.toggle('on', Number((b as HTMLButtonElement).dataset.v) === (autoPlay ? 1 : 0))
+  })
+}
+
+autoplayBox.querySelectorAll('button').forEach((b) => {
+  b.addEventListener('click', () => {
+    autoPlay = Number((b as HTMLButtonElement).dataset.v) === 1
+    syncAutoplay()
+  })
+})
+
+function syncAutoremove() {
+  autoremoveBox.querySelectorAll('button').forEach((b) => {
+    b.classList.toggle('on', Number((b as HTMLButtonElement).dataset.v) === (autoRemove ? 1 : 0))
+  })
+  // 关闭自动移除时，隐藏「连续答对几轮」输入
+  streakField.style.display = autoRemove ? '' : 'none'
+}
+
+autoremoveBox.querySelectorAll('button').forEach((b) => {
+  b.addEventListener('click', () => {
+    autoRemove = Number((b as HTMLButtonElement).dataset.v) === 1
+    syncAutoremove()
+  })
+})
 
 preset.addEventListener('change', () => {
   const p = PRESETS[preset.value]
@@ -73,6 +112,7 @@ rate.addEventListener('input', syncLabels)
 
 $('save').addEventListener('click', async () => {
   const c = Math.min(8, Math.max(2, Number(count.value) || 4))
+  const s = Math.min(5, Math.max(1, Number(streak.value) || 2))
   await saveConfig({
     apiKey: apiKey.value.trim(),
     apiBaseUrl: baseUrl.value.trim(),
@@ -80,7 +120,10 @@ $('save').addEventListener('click', async () => {
     questionCount: c,
     difficulty,
     volume: Number(volume.value),
-    rate: Number(rate.value)
+    rate: Number(rate.value),
+    autoPlayAudio: autoPlay,
+    wrongbookAutoRemove: autoRemove,
+    wrongbookMasterStreak: s
   })
   status.textContent = '已保存 ✓'
   setTimeout(() => (status.textContent = ''), 2000)

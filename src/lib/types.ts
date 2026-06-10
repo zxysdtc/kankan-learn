@@ -95,6 +95,12 @@ export interface AppConfig {
   difficulty: Difficulty // 难度档
   volume: number // 0-1
   rate: number // 语速 0.5-1.5
+  /** 进入题目时是否自动朗读音频；false 时只在点击喇叭后播放 */
+  autoPlayAudio: boolean
+  /** 复习时是否「连续答对自动移除错题」；false 时只能手动「我学会了」移除 */
+  wrongbookAutoRemove: boolean
+  /** 连续答对几轮自动移出错题集（autoRemove 为 true 时生效） */
+  wrongbookMasterStreak: number
 }
 
 export const DEFAULT_CONFIG: AppConfig = {
@@ -104,7 +110,10 @@ export const DEFAULT_CONFIG: AppConfig = {
   questionCount: 4,
   difficulty: 1,
   volume: 1,
-  rate: 0.8
+  rate: 0.8,
+  autoPlayAudio: true,
+  wrongbookAutoRemove: true,
+  wrongbookMasterStreak: 2
 }
 
 /** 消息协议 */

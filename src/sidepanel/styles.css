@@ -157,6 +157,153 @@ body {
   cursor: pointer;
 }
 
+/* 首页「错题本 / 做题记录」入口 */
+.home-extras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 6px;
+}
+.ghost-btn.entry {
+  font-size: 14px;
+  min-height: 44px;
+  padding: 8px 16px;
+}
+.ghost-btn.entry.wrong-entry {
+  border-color: #f0a500;
+  color: #c47f00;
+}
+
+/* 复习模式「我学会了」按钮 */
+.learned-btn {
+  border-color: var(--green);
+  color: var(--green);
+  font-size: 15px;
+  min-height: 46px;
+  padding: 10px 18px;
+}
+
+/* ---------- 列表视图（做题记录 / 错题本） ---------- */
+.list-view {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.list-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.back-btn {
+  border: 2px solid var(--purple);
+  background: #fff;
+  color: var(--purple);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.list-title {
+  font-size: 18px;
+  font-weight: 800;
+}
+.list-summary {
+  font-size: 14px;
+  color: #5a4a6b;
+}
+.list-summary b {
+  color: var(--purple);
+}
+.list-actions {
+  display: flex;
+  gap: 10px;
+}
+.primary-btn.small,
+.ghost-btn.small {
+  font-size: 14px;
+  min-height: 42px;
+  padding: 8px 16px;
+  box-shadow: none;
+}
+.clear-btn {
+  align-self: flex-start;
+}
+.list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rec-item {
+  border: 2px solid #f0e6fb;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: #fff;
+}
+.rec-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.rec-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: #3a2a4d;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rec-time {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: #9a8aa8;
+}
+.rec-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 13px;
+  color: #7b6b8a;
+}
+.rec-score {
+  color: var(--green);
+  font-weight: 700;
+}
+.wrong-word {
+  font-size: 16px;
+}
+.wrong-type {
+  font-size: 12px;
+  color: #9a8aa8;
+  background: #f0e6fb;
+  border-radius: 8px;
+  padding: 1px 8px;
+  margin-left: 4px;
+}
+.rec-remove {
+  flex: 0 0 auto;
+  border: 2px solid var(--green);
+  background: #fff;
+  color: var(--green);
+  border-radius: 10px;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.rec-empty {
+  font-size: 14px;
+  color: #9a8aa8;
+  background: #faf5ff;
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+}
+
 /* ---------- 答题卡 ---------- */
 .quiz-card {
   display: flex;
@@ -220,6 +367,12 @@ body {
   background: #fff0a8;
   border-radius: 6px;
   padding: 0 4px;
+}
+
+/* 听词选词时，把例句里的答案词遮成方块，避免泄题 */
+.example-text .blank {
+  letter-spacing: 2px;
+  color: #b9a6d6;
 }
 
 .speaker.mini-line {
@@ -341,6 +494,12 @@ body {
 .finish-title {
   font-size: 26px;
   font-weight: 800;
+}
+
+.finish-score {
+  font-size: 16px;
+  color: #7b6b8a;
+  font-weight: 700;
 }
 
 /* ---------- 奖励星星 ---------- */

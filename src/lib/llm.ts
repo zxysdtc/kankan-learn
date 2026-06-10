@@ -10,6 +10,19 @@ const DIFFICULTY_DESC: Record<Difficulty, string> = {
   3: '难度：挑战。多用「选拼音」「选声母」，词语可 3 个字，拼音干扰项要做成近音（平翘舌、前后鼻音、声调相近），需要仔细听辨。'
 }
 
+/**
+ * 题库放大倍数：实际出题数 = 设置题数 × POOL_MULTIPLIER（上限 POOL_CAP）。
+ * 侧边栏每次从这个大题库里随机抽取「设置题数」道题，
+ * 让孩子多玩几次也不会每次都遇到相同顺序、相同的题目。
+ */
+const POOL_MULTIPLIER = 4
+const POOL_CAP = 24
+
+/** 由设置题数推算需要生成的题库大小 */
+export function poolSizeOf(count: number): number {
+  return Math.min(Math.max(count, 1) * POOL_MULTIPLIER, POOL_CAP)
+}
+
 function buildPrompt(subtitle: string, count: number, difficulty: Difficulty): string {
   const clipped = subtitle.slice(0, 3000)
   return `你是一位小学低年级语文老师，正在给一个上四年级、但识字和拼音都还比较弱的小朋友出练习题。她刚看完一个视频，下面是这个视频的字幕（每行是一句话）：
@@ -17,7 +30,7 @@ function buildPrompt(subtitle: string, count: number, difficulty: Difficulty): s
 ${clipped}
 """
 
-请你**先通读字幕，找出这个视频里反复出现的、最能代表视频内容的高频词语或关键概念**（优先 2~3 个字的词，而不是随便的生字），共选 ${count} 个，每个出 1 道题。务必让题目和视频内容强相关。
+请你**先通读字幕，找出这个视频里反复出现的、最能代表视频内容的高频词语或关键概念**（优先 2~3 个字的词，而不是随便的生字），共选 ${count} 个，每个出 1 道题（尽量挑不同的词，避免重复）。务必让题目和视频内容强相关。
 
 ${DIFFICULTY_DESC[difficulty]}
 
@@ -50,8 +63,9 @@ export async function generateQuiz(
   subtitleText: string,
   sentences: string[]
 ): Promise<QuizResult> {
-  const count = cfg.questionCount
   const difficulty = cfg.difficulty
+  // 出题数量按倍数放大成一个「题库」，侧边栏再从中随机抽取设置的题数
+  const count = poolSizeOf(cfg.questionCount)
 
   // 无 Key 直接走兜底
   if (!cfg.apiKey) {
