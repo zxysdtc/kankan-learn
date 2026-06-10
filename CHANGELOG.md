@@ -3,6 +3,14 @@
 本项目版本遵循语义化版本号；每个版本同步发布到
 [GitHub Releases](https://github.com/zxysdtc/kankan-learn/releases)（附带可直接加载的 zip 安装包）。
 
+## [v0.3.1] - 2026-06-10
+
+### 新增
+- 首页「打开B站」文字改为**可点击链接**，点击在新标签页打开。
+- 家长设置页新增「B站跳转地址」：留空跳 B站首页；可填某个 **UP 主主页**，点击直达该主页。
+
+下载：[kankan-learn-v0.3.1.zip](https://github.com/zxysdtc/kankan-learn/releases/download/v0.3.1/kankan-learn-v0.3.1.zip)
+
 ## [v0.3.0] - 2026-06-10
 
 ### 新增
@@ -37,6 +45,7 @@
 
 下载：[kankan-learn-v0.1.0.zip](https://github.com/zxysdtc/kankan-learn/releases/download/v0.1.0/kankan-learn-v0.1.0.zip)
 
+[v0.3.1]: https://github.com/zxysdtc/kankan-learn/releases/tag/v0.3.1
 [v0.3.0]: https://github.com/zxysdtc/kankan-learn/releases/tag/v0.3.0
 [v0.2.0]: https://github.com/zxysdtc/kankan-learn/releases/tag/v0.2.0
 [v0.1.0]: https://github.com/zxysdtc/kankan-learn/releases/tag/v0.1.0

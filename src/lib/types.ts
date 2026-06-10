@@ -125,6 +125,8 @@ export interface AppConfig {
   mathCarry: boolean
   /** 数学：是否调用 AI 给算式配一句应用题情境（需填 API 密钥；得数仍由本地计算保证正确） */
   mathUseAi: boolean
+  /** 首页「打开B站」跳转地址：留空则跳 B站首页；可填某个 UP 主主页，点击直达该主页 */
+  biliJumpUrl: string
 }
 
 export const DEFAULT_CONFIG: AppConfig = {
@@ -141,7 +143,8 @@ export const DEFAULT_CONFIG: AppConfig = {
   mathMaxNumber: 20,
   mathOps: 'both',
   mathCarry: true,
-  mathUseAi: false
+  mathUseAi: false,
+  biliJumpUrl: ''
 }
 
 /** 消息协议 */

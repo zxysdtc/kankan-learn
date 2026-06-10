@@ -109,11 +109,21 @@ function render() {
     return
   }
   if (!isBiliVideo()) {
-    screen.innerHTML = homeView(
-      '👋',
-      '一起来学习吧！',
-      '想学拼音生字：打开B站一个有字幕的视频，看完就能玩；想练数学：直接点下面的「🔢 数学练习」。如果打开视频后这里没反应，点右上角 🔄 重新检测。'
-    )
+    // 「打开B站」做成可点击链接：点了在新标签打开（默认 B站首页，或家长设置的 UP 主主页）
+    screen.innerHTML = `
+      <div class="home">
+        <div class="big-emoji">👋</div>
+        <div class="home-title">一起来学习吧！</div>
+        <div class="home-sub">想学拼音生字：<a id="open-bili" class="bili-link" href="#">打开B站</a>一个有字幕的视频，看完就能玩；想练数学：直接点下面的「🔢 数学练习」。如果打开视频后这里没反应，点右上角 🔄 重新检测。</div>
+      </div>`
+    const link = screen.querySelector('#open-bili') as HTMLAnchorElement | null
+    if (link)
+      link.onclick = async (ev) => {
+        ev.preventDefault()
+        const cfg = await getConfig()
+        const url = (cfg.biliJumpUrl || '').trim() || 'https://www.bilibili.com'
+        chrome.tabs.create({ url }).catch(() => {})
+      }
     mountHomeExtras()
     return
   }

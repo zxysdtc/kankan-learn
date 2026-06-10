@@ -559,3 +559,15 @@ body {
   font-size: 40px;
   color: var(--purple);
 }
+
+/* 首页「打开B站」可点击链接 */
+.bili-link {
+  color: #fb7299; /* B站粉 */
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.bili-link:hover {
+  color: #e85a86;
+}

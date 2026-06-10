@@ -48,7 +48,7 @@
 ### 方式一：下载安装包（推荐，免编译）
 
 1. 到 [**Releases**](https://github.com/zxysdtc/kankan-learn/releases/latest) 下载最新版
-   [`kankan-learn-v0.3.0.zip`](https://github.com/zxysdtc/kankan-learn/releases/download/v0.3.0/kankan-learn-v0.3.0.zip)，解压到一个固定文件夹。
+   [`kankan-learn-v0.3.1.zip`](https://github.com/zxysdtc/kankan-learn/releases/download/v0.3.1/kankan-learn-v0.3.1.zip)，解压到一个固定文件夹。
 2. 地址栏输入 `chrome://extensions`，打开右上角「**开发者模式**」。
 3. 点「**加载已解压的扩展程序**」，选择刚解压出来的文件夹。
 4. 点扩展图标 ⭐，或在任意 B站视频页右侧打开侧边栏。

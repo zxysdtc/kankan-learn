@@ -7,6 +7,7 @@ const preset = $<HTMLSelectElement>('preset')
 const baseUrl = $<HTMLInputElement>('baseUrl')
 const model = $<HTMLInputElement>('model')
 const apiKey = $<HTMLInputElement>('apiKey')
+const biliJump = $<HTMLInputElement>('biliJump')
 const count = $<HTMLInputElement>('count')
 const difficultyBox = $<HTMLElement>('difficulty')
 const autoplayBox = $<HTMLElement>('autoplay')
@@ -48,6 +49,7 @@ async function load() {
   baseUrl.value = cfg.apiBaseUrl
   model.value = cfg.apiModel
   apiKey.value = cfg.apiKey
+  biliJump.value = cfg.biliJumpUrl
   count.value = String(cfg.questionCount)
   volume.value = String(cfg.volume)
   rate.value = String(cfg.rate)
@@ -167,6 +169,7 @@ $('save').addEventListener('click', async () => {
   const s = Math.min(5, Math.max(1, Number(streak.value) || 2))
   await saveConfig({
     apiKey: apiKey.value.trim(),
+    biliJumpUrl: biliJump.value.trim(),
     apiBaseUrl: baseUrl.value.trim(),
     apiModel: model.value.trim() || 'deepseek-chat',
     questionCount: c,

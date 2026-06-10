@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "看看学 - 看视频学拼音生字 + 数学练习",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "看完B站视频根据字幕做拼音生字小游戏；也可随时做加减法数学练习，边玩边学。",
   "icons": {
     "16": "src/assets/icons/icon16.png",
