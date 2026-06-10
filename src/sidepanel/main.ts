@@ -114,16 +114,9 @@ function render() {
       <div class="home">
         <div class="big-emoji">👋</div>
         <div class="home-title">一起来学习吧！</div>
-        <div class="home-sub">想学拼音生字：<a id="open-bili" class="bili-link" href="#">打开B站</a>一个有字幕的视频，看完就能玩；想练数学：直接点下面的「🔢 数学练习」。如果打开视频后这里没反应，点右上角 🔄 重新检测。</div>
+        <div class="home-sub">想学拼音生字：${biliLinkHtml('打开B站')}一个有字幕的视频，看完就能玩；想练数学：直接点下面的「🔢 数学练习」。如果打开视频后这里没反应，点右上角 🔄 重新检测。</div>
       </div>`
-    const link = screen.querySelector('#open-bili') as HTMLAnchorElement | null
-    if (link)
-      link.onclick = async (ev) => {
-        ev.preventDefault()
-        const cfg = await getConfig()
-        const url = (cfg.biliJumpUrl || '').trim() || 'https://www.bilibili.com'
-        chrome.tabs.create({ url }).catch(() => {})
-      }
+    bindBiliLink()
     mountHomeExtras()
     return
   }
@@ -132,7 +125,15 @@ function render() {
       screen.innerHTML = loadingView('正在准备这个视频…', '📺')
       break
     case 'error':
-      screen.innerHTML = homeView('🤔', '哎呀', curState.error || '出了点小问题，换个视频试试吧。')
+      // 重新检测没找到视频等错误：同样给出「打开B站」跳转入口
+      screen.innerHTML = `
+        <div class="home">
+          <div class="big-emoji">🤔</div>
+          <div class="home-title">哎呀</div>
+          <div class="home-sub">${esc(curState.error || '出了点小问题，换个视频试试吧。')}</div>
+          <div class="home-sub">想看视频学拼音？${biliLinkHtml('打开B站')}，打开一个有字幕的视频后点右上角 🔄 重新检测；想直接练数学，点下面的「🔢 数学练习」。</div>
+        </div>`
+      bindBiliLink()
       mountHomeExtras()
       break
     case 'ready':
@@ -338,6 +339,23 @@ function loadingView(text: string, emoji: string): string {
 
 function esc(s: string): string {
   return s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!))
+}
+
+/** 「打开B站」可点击链接的 HTML 片段；需配合 bindBiliLink() 绑定点击事件 */
+function biliLinkHtml(text: string): string {
+  return `<a id="open-bili" class="bili-link" href="#">${esc(text)}</a>`
+}
+
+/** 给当前界面里的「打开B站」链接绑定点击：在新标签打开（默认 B站首页，或家长设置的 UP 主主页） */
+function bindBiliLink() {
+  const link = screen.querySelector('#open-bili') as HTMLAnchorElement | null
+  if (!link) return
+  link.onclick = async (ev) => {
+    ev.preventDefault()
+    const cfg = await getConfig()
+    const url = (cfg.biliJumpUrl || '').trim() || 'https://www.bilibili.com'
+    chrome.tabs.create({ url }).catch(() => {})
+  }
 }
 
 // ---------- 做题记录 / 错题本 视图 ----------
