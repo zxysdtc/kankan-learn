@@ -3,6 +3,7 @@ import type { PanelState, Question, QuizResult } from '../lib/types'
 import { refreshTtsConfig, speak, stopSpeak } from './tts'
 import { setSfxVolume } from './sfx'
 import { startQuiz } from './quiz'
+import { generateMathQuiz } from '../lib/mathgen'
 import { getConfig } from '../lib/config'
 import { getRecords, clearRecords, type QuizRecord } from '../lib/records'
 import {
@@ -110,8 +111,8 @@ function render() {
   if (!isBiliVideo()) {
     screen.innerHTML = homeView(
       '👋',
-      '一起来学拼音吧！',
-      '打开B站，点开一个有字幕的视频，看完就能来玩小游戏啦。如果打开视频后这里没反应，点右上角 🔄 重新检测。'
+      '一起来学习吧！',
+      '想学拼音生字：打开B站一个有字幕的视频，看完就能玩；想练数学：直接点下面的「🔢 数学练习」。如果打开视频后这里没反应，点右上角 🔄 重新检测。'
     )
     mountHomeExtras()
     return
@@ -140,6 +141,12 @@ function mountHomeExtras() {
   if (!home) return
   const bar = document.createElement('div')
   bar.className = 'home-extras'
+  // 数学练习入口：不依赖视频，任何时候都能玩
+  const math = document.createElement('button')
+  math.className = 'primary-btn entry math-entry'
+  math.textContent = '🔢 数学练习'
+  math.onclick = startMathFlow
+  bar.appendChild(math)
   if (wrongCount > 0) {
     const wb = document.createElement('button')
     wb.className = 'ghost-btn entry wrong-entry'
@@ -202,6 +209,51 @@ async function startQuizFlow() {
     videoTitle: curState.videoTitle || '',
     mode: 'normal',
     // 答错的题加入错题集
+    onWrong: (q) => {
+      addWrong(q).catch(() => {})
+    },
+    onFinish: async () => {
+      inQuiz = false
+      await refreshWrongCount()
+      render()
+    }
+  })
+}
+
+/** 数学练习流程：本地生成加减题（可选 AI 配情境），进入答题 */
+async function startMathFlow() {
+  const cfg = await getConfig()
+  inQuiz = true
+  screen.innerHTML = loadingView('正在出题，等一下下…', '🔢')
+  speak('我们来做数学题吧')
+
+  let questions: Question[] = []
+  // 优先走后台（启用 AI 时可配应用题情境）；失败 / 未启用 AI 时本地生成兜底
+  const res = await chrome.runtime.sendMessage({ type: 'MATH_QUIZ' }).catch(() => null)
+  if (res?.ok && Array.isArray(res.questions)) questions = res.questions
+  if (!questions.length) {
+    // 题库放大成设置题数的若干倍（与后台 poolSizeOf 口径一致），上限 24
+    const poolSize = Math.min(Math.max(cfg.questionCount, 1) * 4, 24)
+    questions = generateMathQuiz({
+      maxNumber: cfg.mathMaxNumber,
+      ops: cfg.mathOps,
+      preferCarry: cfg.mathCarry,
+      count: poolSize
+    })
+  }
+  if (!questions.length) {
+    inQuiz = false
+    screen.innerHTML = homeView('😅', '没出成题', '再试一次吧。')
+    mountHomeExtras()
+    return
+  }
+
+  startQuiz(screen, questions, {
+    count: cfg.questionCount,
+    autoPlay: cfg.autoPlayAudio,
+    difficulty: cfg.difficulty,
+    videoTitle: '数学练习',
+    mode: 'normal',
     onWrong: (q) => {
       addWrong(q).catch(() => {})
     },
@@ -284,7 +336,8 @@ const TYPE_LABEL: Record<string, string> = {
   listen_choose_word: '听词选词',
   choose_pinyin: '选拼音',
   tone_select: '声调',
-  initial_select: '选声母'
+  initial_select: '选声母',
+  math_arithmetic: '算术'
 }
 
 function fmtTime(ms: number): string {

@@ -526,3 +526,36 @@ body {
     opacity: 0;
   }
 }
+
+/* 数学练习入口（首页大按钮里偏强调） */
+.primary-btn.entry.math-entry {
+  font-size: 15px;
+  min-height: 44px;
+  padding: 8px 18px;
+  background: linear-gradient(180deg, #6fd0c5, #36b3a4);
+}
+
+/* 数学题：大号算式 */
+.math-expr {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 12px;
+  margin: 6px 0 4px;
+  font-weight: 900;
+  color: var(--purple);
+}
+.math-expr .m-expr {
+  font-size: 48px;
+  letter-spacing: 2px;
+}
+.math-expr .m-eq {
+  font-size: 36px;
+  color: #b29bd0;
+}
+
+/* 数学题：数字选项 */
+.opt.mathopt {
+  font-size: 40px;
+  color: var(--purple);
+}

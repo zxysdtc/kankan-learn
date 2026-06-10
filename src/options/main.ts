@@ -13,6 +13,10 @@ const autoplayBox = $<HTMLElement>('autoplay')
 const autoremoveBox = $<HTMLElement>('autoremove')
 const streak = $<HTMLInputElement>('streak')
 const streakField = $<HTMLElement>('streak-field')
+const mathMaxBox = $<HTMLElement>('mathMax')
+const mathOpsBox = $<HTMLElement>('mathOps')
+const mathCarryBox = $<HTMLElement>('mathCarry')
+const mathAiBox = $<HTMLElement>('mathAi')
 const volume = $<HTMLInputElement>('volume')
 const rate = $<HTMLInputElement>('rate')
 const volVal = $<HTMLElement>('volVal')
@@ -27,6 +31,17 @@ const PRESETS: Record<string, { baseUrl: string; model: string }> = {
 let difficulty: Difficulty = 1
 let autoPlay = true
 let autoRemove = true
+let mathMax = 20
+let mathOps: 'add' | 'sub' | 'both' = 'both'
+let mathCarry = true
+let mathAi = false
+
+/** 通用：高亮 seg 中 data-v 等于给定值的按钮（按字符串比较，兼容数字/字符串值） */
+function syncSeg(box: HTMLElement, value: string | number) {
+  box.querySelectorAll('button').forEach((b) => {
+    b.classList.toggle('on', (b as HTMLButtonElement).dataset.v === String(value))
+  })
+}
 
 async function load() {
   const cfg = await getConfig()
@@ -40,12 +55,49 @@ async function load() {
   autoPlay = cfg.autoPlayAudio
   autoRemove = cfg.wrongbookAutoRemove
   streak.value = String(cfg.wrongbookMasterStreak)
+  mathMax = cfg.mathMaxNumber
+  mathOps = cfg.mathOps
+  mathCarry = cfg.mathCarry
+  mathAi = cfg.mathUseAi
   preset.value = detectPreset(cfg.apiBaseUrl, cfg.apiModel)
   syncDifficulty()
   syncAutoplay()
   syncAutoremove()
+  syncMath()
   syncLabels()
 }
+
+function syncMath() {
+  syncSeg(mathMaxBox, mathMax)
+  syncSeg(mathOpsBox, mathOps)
+  syncSeg(mathCarryBox, mathCarry ? 1 : 0)
+  syncSeg(mathAiBox, mathAi ? 1 : 0)
+}
+
+mathMaxBox.querySelectorAll('button').forEach((b) => {
+  b.addEventListener('click', () => {
+    mathMax = Number((b as HTMLButtonElement).dataset.v) || 20
+    syncSeg(mathMaxBox, mathMax)
+  })
+})
+mathOpsBox.querySelectorAll('button').forEach((b) => {
+  b.addEventListener('click', () => {
+    mathOps = ((b as HTMLButtonElement).dataset.v as 'add' | 'sub' | 'both') || 'both'
+    syncSeg(mathOpsBox, mathOps)
+  })
+})
+mathCarryBox.querySelectorAll('button').forEach((b) => {
+  b.addEventListener('click', () => {
+    mathCarry = Number((b as HTMLButtonElement).dataset.v) === 1
+    syncSeg(mathCarryBox, mathCarry ? 1 : 0)
+  })
+})
+mathAiBox.querySelectorAll('button').forEach((b) => {
+  b.addEventListener('click', () => {
+    mathAi = Number((b as HTMLButtonElement).dataset.v) === 1
+    syncSeg(mathAiBox, mathAi ? 1 : 0)
+  })
+})
 
 function detectPreset(b: string, m: string): string {
   if (b === PRESETS.deepseek.baseUrl && m === PRESETS.deepseek.model) return 'deepseek'
@@ -123,7 +175,11 @@ $('save').addEventListener('click', async () => {
     rate: Number(rate.value),
     autoPlayAudio: autoPlay,
     wrongbookAutoRemove: autoRemove,
-    wrongbookMasterStreak: s
+    wrongbookMasterStreak: s,
+    mathMaxNumber: mathMax,
+    mathOps,
+    mathCarry,
+    mathUseAi: mathAi
   })
   status.textContent = '已保存 ✓'
   setTimeout(() => (status.textContent = ''), 2000)

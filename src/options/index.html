@@ -80,6 +80,45 @@
       </section>
 
       <section>
+        <h2>数学练习（加减法）</h2>
+        <div class="field">
+          <span class="label">数值范围</span>
+          <div id="mathMax" class="seg">
+            <button type="button" data-v="20">20 以内<small>含进位/退位</small></button>
+            <button type="button" data-v="100">100 以内<small>更有挑战</small></button>
+          </div>
+          <small>操作数与得数都不超过这个范围。低年级建议先从 20 以内开始。</small>
+        </div>
+
+        <div class="field">
+          <span class="label">运算类型</span>
+          <div id="mathOps" class="seg">
+            <button type="button" data-v="add">➕ 只加法</button>
+            <button type="button" data-v="sub">➖ 只减法</button>
+            <button type="button" data-v="both">➕➖ 加减混合</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="label">优先出进位/退位题</span>
+          <div id="mathCarry" class="seg">
+            <button type="button" data-v="1">✅ 开启<small>如 8+5、13-5</small></button>
+            <button type="button" data-v="0">✋ 关闭<small>普通加减</small></button>
+          </div>
+          <small>开启后更多出「个位相加满十 / 借位」的题，练得更扎实。</small>
+        </div>
+
+        <div class="field">
+          <span class="label">AI 配应用题情境</span>
+          <div id="mathAi" class="seg">
+            <button type="button" data-v="1">✨ 开启<small>需填 API 密钥</small></button>
+            <button type="button" data-v="0">🔢 关闭<small>纯算式</small></button>
+          </div>
+          <small>开启后会给算式配一句生活情境（如「小明有8个苹果，又买了5个」）。得数始终由本地计算，保证正确。</small>
+        </div>
+      </section>
+
+      <section>
         <h2>错题复习</h2>
         <div class="field">
           <span class="label">连续答对后自动移除错题</span>
@@ -104,7 +143,7 @@
       </div>
 
       <p class="note">
-        提示：使用前请在浏览器里登录 B站（否则拿不到字幕）。打开任意带字幕的视频，扩展侧边栏会自动准备好练习。
+        提示：学拼音生字需先登录 B站并打开带字幕的视频；数学练习不依赖视频，打开侧边栏点「🔢 数学练习」即可。
       </p>
     </div>
     <script type="module" src="./main.ts"></script>

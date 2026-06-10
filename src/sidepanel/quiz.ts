@@ -1,8 +1,9 @@
 // 题目渲染与答题交互。每屏一题，听觉驱动，答错温和不惩罚。
 // 每题展示并朗读「原文例句」，让练习和视频内容强相关。
 // 答错的题会在本轮末尾再次出现；普通模式下答错会进入错题集，复习模式据答题更新错题集。
-import type { Difficulty, Question } from '../lib/types'
+import type { Difficulty, Question, MathArithmeticQuestion } from '../lib/types'
 import { addRecord, type RecordDetail } from '../lib/records'
+import { answerToSpeech } from '../lib/mathgen'
 import { speak, stopSpeak, toneWord } from './tts'
 import { playCorrect, playGentle, playCheer } from './sfx'
 import { burstStars } from './reward'
@@ -134,7 +135,15 @@ export function startQuiz(root: HTMLElement, pool: Question[], cb: QuizCallbacks
 
     if (q.example) wrap.appendChild(exampleCard(q))
 
-    // 大喇叭：朗读要考的词
+    // 数学题：大号展示算式「8 + 5 = ?」
+    if (q.type === 'math_arithmetic') {
+      const m = document.createElement('div')
+      m.className = 'math-expr'
+      m.innerHTML = `<span class="m-expr">${esc((q as MathArithmeticQuestion).expr)}</span><span class="m-eq">= ?</span>`
+      wrap.appendChild(m)
+    }
+
+    // 大喇叭：朗读要考的词 / 算式
     wrap.appendChild(speakerBtn(q.promptAudio, 'speaker big'))
 
     const opts = document.createElement('div')
@@ -212,6 +221,23 @@ export function startQuiz(root: HTMLElement, pool: Question[], cb: QuizCallbacks
   }
 
   function buildOptions(q: Question, opts: HTMLElement) {
+    if (q.type === 'math_arithmetic') {
+      const mq = q as MathArithmeticQuestion
+      mq.options.forEach((num, i) => {
+        const b = document.createElement('button')
+        b.className = 'opt mathopt'
+        const span = document.createElement('span')
+        span.textContent = String(num)
+        b.appendChild(span)
+        b.onclick = () => {
+          if (i === mq.answer) onCorrect(b, opts, answerToSpeech(mq.expr, num))
+          else onWrong(b, q)
+        }
+        opts.appendChild(b)
+      })
+      return
+    }
+
     if (q.type === 'tone_select') {
       for (let t = 1; t <= 4; t++) {
         const b = document.createElement('button')

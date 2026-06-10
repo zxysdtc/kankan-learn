@@ -1,7 +1,8 @@
 // Service worker：协调 content / sidepanel，负责拉字幕、调 DeepSeek 出题。
 import type { PanelState, SubtitleResult } from '../lib/types'
 import { fetchSubtitleText, resolveCid } from '../lib/bili'
-import { generateQuiz } from '../lib/llm'
+import { generateQuiz, enrichMathExamples, poolSizeOf } from '../lib/llm'
+import { generateMathQuiz } from '../lib/mathgen'
 import { getConfig } from '../lib/config'
 
 interface TabState {
@@ -175,6 +176,29 @@ chrome.runtime.onMessage.addListener((msg: any, sender, sendResponse) => {
       s.panel = { ...s.panel, phase: 'ready' }
       broadcastState(msg.tabId)
       sendResponse(result)
+    })()
+    return true // 异步响应
+  }
+
+  // 数学练习：本地生成加减题（不依赖视频 / 字幕），可选 AI 配应用题情境
+  if (msg?.type === 'MATH_QUIZ') {
+    ;(async () => {
+      try {
+        const cfg = await getConfig()
+        const count = poolSizeOf(cfg.questionCount)
+        let questions = generateMathQuiz({
+          maxNumber: cfg.mathMaxNumber,
+          ops: cfg.mathOps,
+          preferCarry: cfg.mathCarry,
+          count
+        })
+        if (cfg.mathUseAi && cfg.apiKey) {
+          questions = await enrichMathExamples(cfg, questions)
+        }
+        sendResponse({ ok: true, questions })
+      } catch (e) {
+        sendResponse({ ok: false, message: '数学题生成失败了，再试一次吧。' })
+      }
     })()
     return true // 异步响应
   }

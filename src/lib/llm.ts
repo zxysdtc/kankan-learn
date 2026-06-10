@@ -1,6 +1,6 @@
 // 通用 LLM 出题客户端：兼容 OpenAI 格式接口（DeepSeek / OpenAI / 自建均可）。
 // 端点、模型、Key、难度、题量全部来自配置。只在 background service worker 中调用。
-import type { AppConfig, Question, QuizResult, Difficulty } from './types'
+import type { AppConfig, Question, QuizResult, Difficulty, MathArithmeticQuestion } from './types'
 import { resolveChatEndpoint } from './config'
 import { normalizeQuestions, generateFallbackQuiz } from './quizgen'
 
@@ -123,4 +123,61 @@ function finalize(questions: Question[], fallback: boolean, message?: string): Q
     return { ok: false, message: '这段字幕里没找到适合出题的词。' }
   }
   return { ok: true, questions, fallback, message }
+}
+
+/**
+ * 可选：用 AI 给数学算式各配一句贴近生活的应用题情境（填到 example 字段）。
+ * 关键约束：得数 / 选项一律由本地计算，AI 只负责文字情境，绝不参与判分，避免算错误导孩子。
+ * 任意失败都安全降级为「原样返回（无情境句）」。
+ */
+export async function enrichMathExamples(
+  cfg: AppConfig,
+  questions: MathArithmeticQuestion[]
+): Promise<MathArithmeticQuestion[]> {
+  if (!cfg.apiKey || !questions.length) return questions
+  const exprs = questions.map((q) => q.expr)
+  const prompt = `你在帮一个小学低年级的小朋友做加减法练习。下面是若干道算式，请你给每道算式各编一句**简短、口语化、贴近孩子生活**的应用题情境（比如「小明有8个苹果，又买了5个」），只描述情境、**不要写出得数、不要出现等号**。
+算式按顺序如下：
+${exprs.map((e, i) => `${i + 1}. ${e}`).join('\n')}
+
+只输出 JSON，不要任何多余文字，格式：
+{ "examples": ["小明有8个苹果，又买了5个", "..."] }
+数组长度必须与算式数量一致，顺序一一对应。`
+
+  try {
+    const resp = await fetch(resolveChatEndpoint(cfg.apiBaseUrl), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${cfg.apiKey}`
+      },
+      body: JSON.stringify({
+        model: cfg.apiModel || 'deepseek-chat',
+        temperature: 0.7,
+        response_format: { type: 'json_object' },
+        messages: [
+          { role: 'system', content: '你只输出合法 JSON。' },
+          { role: 'user', content: prompt }
+        ]
+      })
+    })
+    if (!resp.ok) return questions
+    const json = await resp.json()
+    const content: string = json?.choices?.[0]?.message?.content ?? ''
+    let parsed: any
+    try {
+      parsed = JSON.parse(content)
+    } catch {
+      const m = content.match(/\{[\s\S]*\}/)
+      parsed = m ? JSON.parse(m[0]) : null
+    }
+    const examples: any[] = Array.isArray(parsed?.examples) ? parsed.examples : []
+    return questions.map((q, i) => {
+      const ex = String(examples[i] || '').trim()
+      // 情境句不得包含数字得数泄题的风险较低，这里只做非空 + 长度兜底校验
+      return ex && ex.length <= 40 ? { ...q, example: ex } : q
+    })
+  } catch {
+    return questions
+  }
 }
