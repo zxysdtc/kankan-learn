@@ -106,7 +106,10 @@ npm run build
 ```bash
 npm run dev     # Vite 开发模式（热更新）
 npm run build   # 产出 dist/
+npm run pack    # 先构建，再把 dist/ 打成 kankan-learn-v<版本>.zip（零依赖，跨平台）
 ```
+
+> `npm run pack` 会读取 `package.json` 的 `version` 自动命名 zip，可直接作为 Release 安装包上传。
 
 目录说明见项目内 `src/`：
 - `lib/`：字幕获取（`bili.ts`）、AI 出题（`llm.ts`）、拼音工具（`pinyin.ts`）、
